@@ -5,7 +5,8 @@ import os
 import shutil
 import scipy.io as sio
 import csv
-import uuid
+
+LOGGING_NAME = "punchsequence"
 
 freq = 10
 lookup = hebi.Lookup()
@@ -48,16 +49,18 @@ accelerometer = np.vstack(accelerometer)
 mat_path = "logs/currentLog.mat"
 sio.savemat(mat_path, {'time': time, 'gyro': gyro, 'accelerometer': accelerometer})
 
-unique_id = str(uuid.uuid4())
-cache_folder = f"logs/cache/{unique_id}"
+i = 1
+while os.path.exists(f"logs/cache/{LOGGING_NAME}{i}"):
+    i += 1
+cache_folder = f"logs/cache/{LOGGING_NAME}{i}"
 os.makedirs(cache_folder, exist_ok=True)
 
-csv_path = f"{cache_folder}/recording_{unique_id}.csv"
+csv_path = f"{cache_folder}/recording.csv"
 with open(csv_path, 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(['Time','Gyro X','Gyro Y','Gyro Z','Accel X','Accel Y','Accel Z'])
-    for i in range(len(time)):
-        writer.writerow([time[i], gyro[i,0], gyro[i,1], gyro[i,2], accelerometer[i,0], accelerometer[i,1], accelerometer[i,2]])
+    for j in range(len(time)):
+        writer.writerow([time[j], gyro[j,0], gyro[j,1], gyro[j,2], accelerometer[j,0], accelerometer[j,1], accelerometer[j,2]])
 
 shutil.copy("logs/currentLog.mat", cache_folder)
 shutil.copy("logs/currentLog.hebilog", cache_folder)
