@@ -3,6 +3,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 mat_path = "logs/currentLog.mat"
+
+newData = input("Enter your file (leave blank if currentLog): ")
+print(newData != "")
+if newData != "":
+    mat_path = "logs/cache/"+newData+"/currentLog.mat"
+
+print(mat_path)
 data = sio.loadmat(mat_path)
 
 time = np.array(data['time']).flatten()
